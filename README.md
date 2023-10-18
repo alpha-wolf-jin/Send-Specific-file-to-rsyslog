@@ -101,3 +101,25 @@ Oct 18 22:20:09 aap-eda.example.com systemd[1]: Started System Logging Service.
 Oct 18 22:20:09 aap-eda.example.com rsyslogd[9725]: imjournal: journal files changed, reloading...  [v8.2102.0-13.el8 try https://www.rsyslog.com/e/0 ]
 
 ```
+
+# Verify the central log
+
+**Confirm if the logs are sent to the central message file on the remote rsyslog server.**
+
+```
+root@kafka git]# grep tower /var/log/messages
+Oct 18 22:11:05 aap-eda tower-log 2023-10-18 14:11:01,866 INFO     [06a447931ec2408a901620f5ebc6599a] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 731
+Oct 18 22:11:05 aap-eda tower-log 2023-10-18 14:11:01,866 INFO     [06a447931ec2408a901620f5ebc6599a] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 731
+Oct 18 22:18:28 aap-eda tower-log 2023-10-18 14:18:25,156 INFO     [7ce7f5a946fb403193d0703bcacc6a39] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 732
+Oct 18 22:18:28 aap-eda tower-log 2023-10-18 14:18:25,156 INFO     [7ce7f5a946fb403193d0703bcacc6a39] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 732
+Oct 18 22:20:39 aap-eda tower-log 2023-10-18 14:20:32,190 INFO     [76a76e595efa4218a4b0482f84d99f72] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 733
+Oct 18 22:20:39 aap-eda tower-log 2023-10-18 14:20:32,190 INFO     [76a76e595efa4218a4b0482f84d99f72] awx.main.commands.run_callback_receiver Starting EOF event processing for Job 733
+
+[root@kafka log]# grep job_lifecycle-log messages
+Oct 18 22:17:38 aap-eda job_lifecycle-log {"type": "job", "task_id": 712, "state": "created", "work_unit_id": null, "task_name": "recommendation", "guid": "1af8da004b464c758bd5b6cbe7551d13", "time": "2023-10-18T03:42:46.311515+00:00"}
+Oct 18 22:17:38 aap-eda job_lifecycle-log {"type": "job", "task_id": 712, "state": "controller_node_chosen", "work_unit_id": null, "task_name": "recommendation", "controller_node": "aap-eda.example.com", "guid": "1af8da004b464c758bd5b6cbe7551d13", "time": "2023-10-18T03:42:46.454136+00:00"}
+Oct 18 22:17:38 aap-eda job_lifecycle-log {"type": "job", "task_id": 712, "state": "execution_node_chosen", "work_unit_id": null, "task_name": "recommendation", "execution_node": "aap-eda.example.com", "guid": "1af8da004b464c758bd5b6cbe7551d13", "time": "2023-10-18T03:42:46.454442+00:00"}
+Oct 18 22:17:38 aap-eda job_lifecycle-log {"type": "job", "task_id": 712, "state": "waiting", "work_unit_id": null, "task_name": "recommendation", "guid": "1af8da004b464c758bd5b6cbe7551d13", "time": "2023-10-18T03:42:46.508027+00:00"}
+
+
+```
