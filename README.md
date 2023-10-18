@@ -22,6 +22,10 @@ https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-setup-centralized-sy
 # Remote Syslog Server Set Up
 
 ```
+[root@kafka git]# ip a | grep -w inet
+    inet 127.0.0.1/8 scope host lo
+    inet 192.168.122.33/24 brd 192.168.122.255 scope global noprefixroute enp1s0
+
 [root@kafka git]# yum update rsyslog -y
 
 [root@kafka git]# vim /etc/rsyslog.conf
