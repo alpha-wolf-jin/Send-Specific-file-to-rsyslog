@@ -14,7 +14,9 @@ git add . ; git commit -a -m "update README" ; git push -u origin main
 ```
 
 **Reference**
+
 https://www.casesup.com/category/knowledgebase/howtos/how-to-forward-specific-log-file-to-a-remote-syslog-server
+
 https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-setup-centralized-syslog-server-on-centos-8-rhel-8.html
 
 # Remote Syslog Server Set Up
@@ -60,4 +62,38 @@ Oct 18 21:40:33 kafka.example.com rsyslogd[13493]: imjournal: journal files chan
 
 Specify the log files to be sent to remote rsyslog
 
+# Append 2 line to /etc/rsyslog.conf
 
+```
+[root@aap-eda ~]# dnf install -y rsyslog
+
+[root@aap-eda ~]# vim /etc/rsyslog.conf
+...
+action(type="omfwd" Target="192.168.122.33" Port="514" Protocol="udp")
+action(type="omfwd" Target="192.168.122.33" Port="514" Protocol="tcp")
+
+[root@aap-eda ~]# cat /etc/rsyslog.d/aap.conf 
+$ModLoad imfile
+input(type="imfile" File="/var/log/tower/tower.log" Tag="tower-log" Severity="info")
+input(type="imfile" File="/var/log/tower/job_lifecycle.log" Tag="job_lifecycle-log" Severity="info")
+
+[root@aap-eda log]# systemctl restart rsyslog
+
+[root@aap-eda log]# systemctl status rsyslog
+● rsyslog.service - System Logging Service
+   Loaded: loaded (/usr/lib/systemd/system/rsyslog.service; enabled; vendor preset: enabled)
+   Active: active (running) since Wed 2023-10-18 22:20:09 +08; 19min ago
+     Docs: man:rsyslogd(8)
+           https://www.rsyslog.com/doc/
+ Main PID: 9725 (rsyslogd)
+    Tasks: 4 (limit: 98188)
+   Memory: 3.2M
+   CGroup: /system.slice/rsyslog.service
+           └─9725 /usr/sbin/rsyslogd -n
+
+Oct 18 22:20:09 aap-eda.example.com systemd[1]: Starting System Logging Service...
+Oct 18 22:20:09 aap-eda.example.com rsyslogd[9725]: [origin software="rsyslogd" swVersion="8.2102.0-13.el8" x-pid="9725" x-info="https://www.rsyslog.com"] start
+Oct 18 22:20:09 aap-eda.example.com systemd[1]: Started System Logging Service.
+Oct 18 22:20:09 aap-eda.example.com rsyslogd[9725]: imjournal: journal files changed, reloading...  [v8.2102.0-13.el8 try https://www.rsyslog.com/e/0 ]
+
+```
